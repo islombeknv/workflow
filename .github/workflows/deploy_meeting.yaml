@@ -1,0 +1,23 @@
+on:
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: 'Commit hash to deploy from'
+        required: false
+        default: ''
+      environment:
+        description: 'Deployment environment'
+        required: false
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - stg
+          - prod
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "we did things for ${{ inputs.environment }}"
