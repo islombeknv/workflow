@@ -23,7 +23,6 @@ permissions:
 
 env:
   PYTHON_VERSION: '3.12'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'meeting'
 
 jobs:
   build-and-deploy:
@@ -57,6 +56,5 @@ jobs:
       - name: 'Resolve Dependencies and Make Init'
         shell: bash
         run: |
-          cd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           python -m pip install --upgrade pip
           make init
