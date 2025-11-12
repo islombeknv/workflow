@@ -21,17 +21,40 @@ permissions:
   id-token: write   # required for OIDC token
   contents: read
 
+env:
+  PYTHON_VERSION: '3.12'
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Azure CLI
         run: |
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
       - name: Azure CLI Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+        if: ${{ inputs.environment != 'prod' }}
+        uses: actions/setup-python@v4
+        with:
+            python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install build tools
+        if: ${{ inputs.environment != 'prod' }}
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y make build-essential
+
+      - name: 'Resolve Dependencies and Make Init'
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          make init
